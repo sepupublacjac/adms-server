@@ -1,0 +1,37 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    container_name: d2-adms-server
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      ATTENDANCE_TABLE: ${ATTENDANCE_TABLE:-adms_logs}
+      COL_PIN: ${COL_PIN:-user_id}
+      COL_TIMESTAMP: ${COL_TIMESTAMP:-date}
+      COL_STATUS: ${COL_STATUS:-check_logs}
+      COL_DEVICE_SN: ${COL_DEVICE_SN:-device_sn}
+      COL_VERIFY_TYPE: ${COL_VERIFY_TYPE:-}
+      COL_WORKCODE: ${COL_WORKCODE:-}
+      COL_RAW_LINE: ${COL_RAW_LINE:-}
+      LOG_RAW_REQUESTS: ${LOG_RAW_REQUESTS:-true}
+      ATTLOG_TIME_CORRECTION_SECONDS: ${ATTLOG_TIME_CORRECTION_SECONDS:-0}
+    #ports:
+    #  - "${APP_PORT:-8080}:8080"
+    expose:
+      - "8080"
+    networks:
+      - d2-tunnel
+    # Kalau database Postgres-mu jalan di HOST (bukan di container lain),
+    # dan kamu di Linux, baris ini biar container bisa akses lewat
+    # host.docker.internal. Di Docker Desktop (Mac/Windows) biasanya sudah
+    # otomatis tersedia tanpa perlu baris ini.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  d2-tunnel:
+    external: true
